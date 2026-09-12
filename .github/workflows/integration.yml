@@ -1,0 +1,71 @@
+name: Integration
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 18 * * 1"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: integration-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  compatibility:
+    name: Repository compatibility
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out platform inventory
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Validate repository inventory
+        run: |
+          jq -e '
+            .schemaVersion == 1 and
+            .protocols.restApiMajor == "v1" and
+            .protocols.webSocketProtocol == 1 and
+            ([.repositories[].name] | sort == ["TSP-backend", "TSP-template"]) and
+            ([.repositories[].ciRef] | all(. == "main"))
+          ' repositories.json
+
+      - name: Check out TSP-template
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          repository: pangorithm/TSP-template
+          ref: main
+          path: components/TSP-template
+
+      - name: Check out TSP-backend
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          repository: pangorithm/TSP-backend
+          ref: main
+          path: components/TSP-backend
+
+      - name: Install Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+        with:
+          bun-version: 1.3.11
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@02cb101ec7c40f2c49e1d9714d64511d8e1b74de
+        with:
+          toolchain: 1.98.1
+
+      - name: Verify template contracts
+        working-directory: components/TSP-template
+        run: |
+          bun install --frozen-lockfile
+          bun run typecheck
+          bun run test
+
+      - name: Verify backend contracts
+        working-directory: components/TSP-backend
+        run: cargo test --locked --all-targets --all-features
+
+      - name: Smoke backend public HTTP contracts
+        run: bash scripts/integration-smoke.sh components/TSP-backend
