@@ -28,7 +28,7 @@ jobs:
             .schemaVersion == 1 and
             .protocols.restApiMajor == "v1" and
             .protocols.webSocketProtocol == 1 and
-            ([.repositories[].name] | sort == ["TSP-backend", "TSP-template"]) and
+            ([.repositories[].name] | sort == ["TSP-backend", "TSP-bastion-gambit", "TSP-template"]) and
             ([.repositories[].ciRef] | all(. == "main"))
           ' repositories.json
 
@@ -45,6 +45,30 @@ jobs:
           repository: pangorithm/TSP-backend
           ref: main
           path: components/TSP-backend
+
+      - name: Check out TSP-bastion-gambit
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          repository: pangorithm/TSP-bastion-gambit
+          ref: main
+          path: components/TSP-bastion-gambit
+
+      - name: Verify game compatibility declaration
+        run: |
+          template_ref="$(jq -r '.repositories[] | select(.name == "TSP-bastion-gambit") | .templateRef' repositories.json)"
+          rest_api_major="$(jq -r '.protocols.restApiMajor' repositories.json)"
+          websocket_protocol="$(jq -r '.protocols.webSocketProtocol' repositories.json)"
+          jq -e \
+            --arg template_ref "$template_ref" \
+            --arg rest_api_major "$rest_api_major" \
+            --argjson websocket_protocol "$websocket_protocol" \
+            '.name == "TSP-bastion-gambit" and
+             .kind == "game" and
+             .template.repository == "pangorithm/TSP-template" and
+             .template.ref == $template_ref and
+             .backend.restApiMajor == $rest_api_major and
+             .backend.webSocketProtocol == $websocket_protocol' \
+            components/TSP-bastion-gambit/.tsp/project.json
 
       - name: Install Bun
         uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
