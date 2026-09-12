@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "protocols": {
+    "restApiMajor": "v1",
+    "webSocketProtocol": 1
+  },
+  "repositories": [
+    {
+      "name": "TSP-template",
+      "kind": "template",
+      "httpsUrl": "https://github.com/pangorithm/TSP-template.git",
+      "sshUrl": "git@github.com:pangorithm/TSP-template.git",
+      "defaultBranch": "main",
+      "ciRef": "main"
+    },
+    {
+      "name": "TSP-backend",
+      "kind": "backend",
+      "httpsUrl": "https://github.com/pangorithm/TSP-backend.git",
+      "sshUrl": "git@github.com:pangorithm/TSP-backend.git",
+      "defaultBranch": "main",
+      "ciRef": "main",
+      "restApiMajor": "v1",
+      "webSocketProtocol": 1
+    }
+  ]
+}
