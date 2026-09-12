@@ -10,6 +10,7 @@
 | --- | --- |
 | [`TSP-template`](https://github.com/pangorithm/TSP-template) | Tauri v2, SolidJS, Phaser 기반 게임 클라이언트 템플릿 |
 | [`TSP-backend`](https://github.com/pangorithm/TSP-backend) | 여러 게임이 공유하는 REST·WebSocket 백엔드 기반 |
+| [`TSP-bastion-gambit`](https://github.com/pangorithm/TSP-bastion-gambit) | 체스에서 영감을 받은 전략 디펜스 게임 |
 | 게임 저장소 | `TSP-template`에서 시작해 게임별 코드, 에셋, 출시 정책을 소유 |
 
 등록된 저장소와 공통 프로토콜 버전은 [`repositories.json`](repositories.json)에 기록합니다.

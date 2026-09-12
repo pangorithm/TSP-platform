@@ -22,6 +22,17 @@
       "ciRef": "main",
       "restApiMajor": "v1",
       "webSocketProtocol": 1
+    },
+    {
+      "name": "TSP-bastion-gambit",
+      "kind": "game",
+      "httpsUrl": "https://github.com/pangorithm/TSP-bastion-gambit.git",
+      "sshUrl": "git@github.com:pangorithm/TSP-bastion-gambit.git",
+      "defaultBranch": "main",
+      "ciRef": "main",
+      "templateRef": "v0.1.0",
+      "restApiMajor": "v1",
+      "webSocketProtocol": 1
     }
   ]
 }
